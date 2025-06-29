@@ -320,6 +320,36 @@ export default function Recording() {
               </span>
             )}
           </div>
+          
+          {/* Save Button */}
+          {recordingState.audioBlob && !recordingState.isRecording && (
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={clearRecording}
+                disabled={saveRecordingMutation.isPending}
+                className="flex-1 px-4 py-2 text-gray-600 bg-gray-100 rounded-lg font-medium disabled:opacity-50"
+              >
+                Discard
+              </button>
+              <button
+                onClick={() => saveRecordingMutation.mutate()}
+                disabled={saveRecordingMutation.isPending || !selectedBookId}
+                className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {saveRecordingMutation.isPending ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin"></i>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-save"></i>
+                    Save Note
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
       
