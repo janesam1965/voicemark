@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertBookSchema, insertJournalEntrySchema, updateBookSchema, updateJournalEntrySchema } from "@shared/schema";
@@ -248,7 +248,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: 'Invalid entry data', details: error.errors });
       }
-      res.status(500).json({ error: 'Failed to create journal entry', details: error.message });
+      res.status(500).json({ error: 'Failed to create journal entry', details: error instanceof Error ? error.message : String(error) });
     }
   });
 

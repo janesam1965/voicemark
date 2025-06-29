@@ -111,7 +111,7 @@ export class DatabaseStorage implements IStorage {
     await db.delete(journalEntries).where(eq(journalEntries.bookId, id));
     
     const result = await db.delete(books).where(eq(books.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   async searchBooks(query: string): Promise<Book[]> {
@@ -212,7 +212,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteJournalEntry(id: number): Promise<boolean> {
     const result = await db.delete(journalEntries).where(eq(journalEntries.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   async searchJournalEntries(query: string): Promise<JournalEntryWithBook[]> {

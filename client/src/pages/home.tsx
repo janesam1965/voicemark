@@ -191,7 +191,7 @@ export default function Home() {
               <div className="text-2xl font-bold text-yellow-500">
                 {formatAudioDuration(stats.totalAudioTime)}
               </div>
-              <div class="text-xs text-gray-500">Audio</div>
+              <div className="text-xs text-gray-500">Audio</div>
             </div>
           </div>
         )}
