@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import StatusBar from "@/components/status-bar";
 import BottomNavigation from "@/components/bottom-navigation";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,7 +17,9 @@ import type { BookWithStats } from "@shared/schema";
 import { z } from "zod";
 
 const bookFormSchema = insertBookSchema.extend({
-  totalPages: z.coerce.number().optional(),
+  totalPages: z.union([z.string(), z.number()]).optional().transform(val => 
+    typeof val === 'string' && val === '' ? undefined : Number(val)
+  ),
   currentPage: z.coerce.number().optional(),
 });
 
@@ -41,7 +43,7 @@ export default function Library() {
       author: "",
       isbn: "",
       coverUrl: "",
-      totalPages: undefined,
+      totalPages: "",
       currentPage: 0,
       currentChapter: "",
       status: "to_read",
@@ -195,6 +197,9 @@ export default function Library() {
             <DialogContent className="max-w-md mx-auto">
               <DialogHeader>
                 <DialogTitle>Add New Book</DialogTitle>
+                <DialogDescription>
+                  Add a new book to your reading library. Fill out the details below.
+                </DialogDescription>
               </DialogHeader>
               
               <Form {...form}>
