@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceMark - Mobile App Wireframes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .wireframe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .phone-container {
+            background: #333;
+            border-radius: 25px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .phone-container:hover {
+            transform: translateY(-5px);
+        }
+        
+        .phone-screen {
+            background: white;
+            border-radius: 20px;
+            width: 280px;
+            height: 500px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .phone-screen.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+        
+        .screen-title {
+            background: #4a5568;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .screen-content {
+            padding: 20px;
+            height: calc(100% - 32px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Common UI Elements */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4a5568;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 5px 0;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn-record {
+            background: #e53e3e;
+            color: white;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            font-size: 24px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        
+        .nav-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #f7fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+        
+        .nav-item {
+            text-align: center;
+            font-size: 10px;
+            color: #718096;
+            cursor: pointer;
+        }
+        
+        .nav-item.active {
+            color: #667eea;
+        }
+        
+        .journal-entry {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .book-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .book-cover {
+            width: 40px;
+            height: 60px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin-right: 12px;
+        }
+        
+        .recording-indicator {
+            width: 20px;
+            height: 20px;
+            background: #e53e3e;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            background: #f7fafc;
+        }
+        
+        .wireframe-notes {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            color: white;
+        }
+        
+        .navigation-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 VoiceMark - Mobile App Wireframes</h1>
+        
+        <div class="navigation-tabs">
+            <button class="tab active" onclick="showAll()">All Screens</button>
+            <button class="tab" onclick="showAuth()">Authentication</button>
+            <button class="tab" onclick="showCore()">Core Features</button>
+            <button class="tab" onclick="showManagement()">Management</button>
+        </div>
+        
+        <div class="wireframe-grid" id="wireframe-grid">
+            <!-- Authentication Screens -->
+            <div class="phone-container auth-screen">
+                <div class="phone-screen" onclick="selectScreen(this)">
+                    <div class="screen-title">Welcome / Onboarding</div>
+                    <div class="screen-content">
+                        <div style="text-align: center; margin-top: 40px;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">🎙️</div>
+                            <h2 style="color: #667eea; margin-bottom: 10px;">VoiceMark</h2>
+                            <p style="color: #718096; margin-bottom: 30px;">Your Voice, Your Bookmark</p>
+                            <div style="background: #f7fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                                <p style="font-size: 12px; color: #4a5568;">📖 Read physical books<br>🎤 Record voice notes<br>📝 Auto-transcribe thoughts<br>🔍 Search & organize</p>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">Get Started</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="phone-container auth-screen">
+                <div class="phone-screen" onclick="selectScreen(this)">
+                    <div class="screen-title">Login / Sign Up</div>
+                    <div class="screen-content">
+                        <div class="header">
+                            <div class="logo">VoiceMark</div>
+                        </div>
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <h3 style="color: #4a5568;">Welcome Back</h3>
+                        </div>
+                        <input type="email" class="input-field" placeholder="Email address">
+                        <input type="password" class="input-field" placeholder="Password">
+                        <a href="#" style="color: #667eea; font-size: 12px; text-decoration: none;">Forgot password?</a>
+                        <button class="btn btn-primary" style="width: 100%; margin: 20px 0;">Sign In</button>
+                        <div style="text-align: center; margin: 20px 0; color: #718096;">or</div>
+                        <button class="btn btn-secondary" style="width: 100%;">Continue with Google</button>
+                        <p style="text-align: center; margin-top: 20px; font-size: 12px; color: #718096;">
+                            Don't have an account? <a href="#" style="color: #667eea;">Sign up</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Core Feature Screens -->
+            <div class="phone-container core-screen">
+                <div class="phone-screen" onclick="selectScreen(this)">
+                    <div class="screen-title">Home Dashboard</div>
+                    <div class="screen-content">
+                        <div class="header">
+                            <div class="logo">VoiceMark</div>
+                            <div style="font-size: 20px;">⚙️</div>
+                        </div>
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <button class="btn-record">🎤</button>
+                            <p style="color: #718096; font-size: 12px;">Tap to record</p>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="color: #4a5568; margin-bottom: 10px;">Recent Notes</h4>
+                            <div class="journal-entry">
+                                <div style="font-size: 11px; color: #718096;">Chapter 3, Page 67 • 2 hours ago</div>
+                                <p style="font-size: 13px; margin: 5px 0;">"This paragraph really resonates with personal growth concepts..."</p>
+                                <div style="font-size: 10px; color: #667eea;">▶️ Play Audio</div>
+                            </div>
+                            <div class="journal-entry">
+                                <div style="font-size: 11px; color: #718096;">Chapter 2, Page 45 • Yesterday</div>
+                                <p style="font-size: 13px; margin: 5px 0;">"Compare with Brené Brown's vulnerability theory..."</p>
+                                <div style="font-size: 10px; color: #667eea;">▶️ Play Audio</div>
+                            </div>
+                        </div>
+                        <div class="nav-bar">
+                            <div class="nav-item active">🏠<br>Home</div>
+                            <div class="nav-item">📚<br>Library</div>
+                            <div class="nav-item">📝<br>Journal</div>
+                            <div class="nav-item">⚙️<br>Settings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="phone-container core-screen">
+                <div class="phone-screen" onclick="selectScreen(this)">
+                    <div class="screen-title">Recording Interface</div>
+                    <div class="screen-content">
+                        <div class="header">
+                            <div>❌</div>
+                            <div style="color: #4a5568; font-weight: bold;">Recording</div>
+                            <div>✓</div>
+                        </div>
+                        <div style="text-align: center; margin: 20px 0;">
+                            <div class="recording-indicator" style="margin: 0 auto 10px;"></div>
+                            <p style="color: #e53e3e; font-size: 14px;">Recording... 00:23</p>
+                        </div>
+                        <div style="background: #f7fafc; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                            <input type="text" class="input-field" placeholder="Book title (optional)">
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" class="input-field" placeholder="Chapter" style="flex: 1;">
+                                <input type="text" class="input-field" placeholder="Page" style="flex: 1;">
+                            </div>
+                        </div>
+                        <div class="controls">
+                            <button class="control-btn" style="background: #e2e8f0; color: #4a5568;">⏸️</button>
+                            <button class="control-btn" style="background: #e53e3e; color: white;">⏹️</button>
+                            <button class="control-btn" style="background: #38a169; color: white;">✓</button>
+                        </div>
+                        <div style="text-align: center; margin-top: 30px;">
+                            <p style="color: #718096; font-size: 12px;">Speak naturally. Your voice will be transcribed automatically.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="phone-container core-screen">
+                <div class="phone-screen" onclick="selectScreen(this)">
+                    <div class="screen-title">Transcription & Entry</div>
+                    <div class="screen-content">
+                        <div class="header">
+                            <div>←</div>
+                            <div style="color: #4a5568; font-weight: bold;">New Entry</div>
+                            <div>💾</div>
+                        </div>
+                        <div style="background: #f7fafc; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                            <div style="font-size: 11px; color: #718096; margin-bottom: 5px;">June 29, 2025 • 2:30 PM</div>
+                            <div style="font-size: 11px; color: #667eea;">📖 Atomic Habits • Chapter 3, Page 67</div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 12px; color: #4a5568; display: block; margin-bottom: 5px;">Transcription:</label>
+                            <textarea class="input-field" style="height: 120px; resize: none;" placeholder="This paragraph is key—really resonates with personal growth. Compare with Brené Brown's concepts on vulnerability."></textarea>
+                        </div>
+                        <div style="background: #667eea; color: white; border-radius: 8px; padding: 12px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <span>▶️</span>
+                            <span style="font-size: 12px;">Play Original Audio (00:23)</span>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 12px; color: #4a5568; display: block; margin-bottom: 5px;">Tags (optional):</label>
+                            <input type="text" class="input-field" placeholder="personal growth, vulnerability, habits">
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">Save Entry</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Management Screens -->
+            <div class="phone-container management-screen">
+                <div class="phone-screen" onclick="selectScreen(this)">
+                    <div class="screen-title">Book Library</div>
+                    <div class="screen-content">
+                        <div class="header">
+                            <div class="logo">Library</div>
+                            <div>+</div>
+                        </div>
+                        <input type="text" class="search-bar" placeholder="Search books...">
+                        <div style="overflow-y: auto; flex: 1;">
+                            <div class="book-item">
+                                <div class="book-cover"></div>
+                                <div>
+                                    <div style="font-weight: bold; font-size: 13px;">Atomic Habits</div>
+                                    <div style="color: #718096; font-size: 11px;">James Clear</div>
+                                    <div style="color: #667eea; font-size: 10px;">12 notes</div>
+                                </div>
+                            </div>
+                            <div class="book-item">
+                                <div class="book-cover"></div>
+                                <div>
+                                    <div style="font-weight: bold; font-size: 13px;">Daring Greatly</div>
+                                    <div style="color: #718096; font-size: 11px;">Brené Brown</div>
+                                    <div style="color: #667eea; font-size: 10px;">8 notes</div>
+                                </div>
+                            </div>
+                            <div class="book-item">
+                                <div class="book-cover"></div>
+                                <div>
+                                    <div style="font-weight: bold; font-size: 13px;">The Power of Now</div>
+                                    <div style="color: #718096; font-size: 11px;">Eckhart Tolle</div>
+                                    <div style="color: #667eea; font-size: 10px;">15 notes</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="nav-bar">
+                            <div class="nav-item">🏠<br>Home</div>
+                            <div class="nav-item active">📚<br>Library</div>
+                            <div class="nav-item">📝<br>Journal</div>
+                            <div class="nav-item">⚙️<br>Settings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="phone-container management-screen">
+                <div class="phone-screen" onclick="selectScreen(this)">
+                    <div class="screen-title">Add New Book</div>
+                    <div class="screen-content">
+                        <div class="header">
+                            <div>←</div>
+                            <div style="color: #4a5568; font-weight: bold;">Add Book</div>
+                            <div>✓</div>
+                        </div>
+                        <div style="text-align: center; margin: 20px 0;">
+                            <div style="width: 80px; height: 120px; background: #e2e8f0; border-radius: 8px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: #718096;">📷</div>
+                            <button class="btn btn-secondary" style="margin-bottom: 10px;">Scan Barcode</button>
+                            <p style="color: #718096; font-size: 11px;">or enter manually</p>
+                        </div>
+                        <input type="text" class="input-field" placeholder="Book Title *">
+                        <input type="text" class="input-field" placeholder="Author">
+                        <input type="text" class="input-field" placeholder="ISBN (optional)">
+                        <textarea class="input-field" style="height: 60px; resize: none;" placeholder="Notes or description (optional)"></textarea>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">Add Book</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="phone-container management-screen">
+                <div class="phone-screen" onclick="selectScreen(this)">
+                    <div class="screen-title">Journal & Search</div>
+                    <div class="screen-content">
+                        <div class="header">
+                            <div class="logo">Journal</div>
+                            <div>🔍</div>
+                        </div>
+                        <input type="text" class="search-bar" placeholder="Search notes, books, tags...">
+                        <div style="display: flex; gap: 8px; margin-bottom: 15px; font-size: 10px;">
+                            <button class="btn btn-secondary" style="padding: 4px 8px;">All</button>
+                            <button class="btn btn-secondary" style="padding: 4px 8px;">Today</button>
+                            <button class="btn btn-secondary" style="padding: 4px 8px;">This Week</button>
+                            <button class="btn btn-secondary" style="padding: 4px 8px;">Tagged</button>
+                        </div>
+                        <div style="overflow-y: auto; flex: 1;">
+                            <div class="journal-entry">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <div style="font-size: 11px; color: #718096;">2 hours ago</div>
+                                    <div style="font-size: 10px; color: #667eea;">▶️</div>
+                                </div>
+                                <div style="font-size: 10px; color: #667eea; margin-bottom: 3px;">Atomic Habits • Ch3, P67</div>
+                                <p style="font-size: 12px;">"This paragraph really resonates with personal growth concepts..."</p>
+                                <div style="font-size: 9px; color: #718096; margin-top: 5px;">#personal-growth #habits</div>
+                            </div>
+                            <div class="journal-entry">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <div style="font-size: 11px; color: #718096;">Yesterday</div>
+                                    <div style="font-size: 10px; color: #667eea;">▶️</div>
+                                </div>
+                                <div style="font-size: 10px; color: #667eea; margin-bottom: 3px;">Atomic Habits • Ch2, P45</div>
+                                <p style="font-size: 12px;">"Compare with Brené Brown's vulnerability theory..."</p>
+                                <div style="font-size: 9px; color: #718096; margin-top: 5px;">#vulnerability #comparison</div>
+                            </div>
+                        </div>
+                        <div class="nav-bar">
+                            <div class="nav-item">🏠<br>Home</div>
+                            <div class="nav-item">📚<br>Library</div>
+                            <div class="nav-item active">📝<br>Journal</div>
+                            <div class="nav-item">⚙️<br>Settings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="phone-container management-screen">
+                <div class="phone-screen" onclick="selectScreen(this)">
+                    <div class="screen-title">Settings & Export</div>
+                    <div class="screen-content">
+                        <div class="header">
+                            <div class="logo">Settings</div>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="color: #4a5568; margin-bottom: 10px; font-size: 14px;">Account</h4>
+                            <div style="background: #f7fafc; border-radius: 8px; padding: 12px;">
+                                <div style="font-size: 13px; font-weight: bold;">john@example.com</div>
+                                <div style="color: #718096; font-size: 11px;">Premium Member</div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="color: #4a5568; margin-bottom: 10px; font-size: 14px;">Export</h4>
+                            <button class="btn btn-secondary" style="width: 100%; margin-bottom: 8px;">Export All Notes (PDF)</button>
+                            <button class="btn btn-secondary" style="width: 100%; margin-bottom: 8px;">Export All Notes (Text)</button>
+                            <button class="btn btn-secondary" style="width: 100%;">Export Audio Files</button>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="color: #4a5568; margin-bottom: 10px; font-size: 14px;">Preferences</h4>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                                <span style="font-size: 12px;">Auto-transcription</span>
+                                <div style="width: 40px; height: 20px; background: #667eea; border-radius: 10px; position: relative;">
+                                    <div style="width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; top: 1px; right: 1px;"></div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                                <span style="font-size: 12px;">Cloud sync</span>
+                                <div style="width: 40px; height: 20px; background: #667eea; border-radius: 10px; position: relative;">
+                                    <div style="width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; top: 1px; right: 1px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="nav-bar">
+                            <div class="nav-item">🏠<br>Home</div>
+                            <div class="nav-item">📚<br>Library</div>
+                            <div class="nav-item">📝<br>Journal</div>
+                            <div class="nav-item active">⚙️<br>Settings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="wireframe-notes">
+            <h3>📋 VoiceMark Wireframe Notes</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 15px;">
+                <div>
+                    <h4>🎯 Key Features Highlighted:</h4>
+                    <ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">
+                        <li>Prominent voice recording button</li>
+                        <li>Real-time transcription interface</li>
+                        <li>Book-specific organization</li>
+                        <li>Audio playback capabilities</li>
+                        <li>Search and tagging system</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>🎨 Design Principles:</h4>
+                    <ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">
+                        <li>Clean, minimal interface</li>
+                        <li>Easy one-thumb operation</li>
+                        <li>Clear visual hierarchy</li>
+                        <li>Consistent navigation</li>
+                        <li>Accessibility-focused</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>📱 Mobile-First Approach:</h4>
+                    <ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">
+                        <li>Touch-friendly controls</li>
+                        <li>Optimized for portrait mode</li>
+                        <li>Quick access to core features</li>
+                        <li>Minimal typing required</li>
+                        <li>Gesture-based interactions</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-style: italic; opacity: 0.9;">
+                💡 These wireframes represent the core user journey from authentication through book management, voice recording, transcription, and organization. Each screen is designed to minimize friction and maximize the natural reading-to-reflection workflow.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        function select
