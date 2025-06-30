@@ -89,30 +89,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
           details: error.errors.map(e => ({
             path: e.path.join('.'),
             message: e.message,
-            code: e.code,
-            received: e.received,
-            expected: e.expected
+            ...('code' in e ? { code: e.code } : {})
           })) 
         });
       }
       
-      // Enhanced error logging
+      // Enhanced error logging with type safety
+      const errorObj = error as Error & { code?: string; details?: any };
       console.error('Unexpected error creating book:', {
-        name: error?.name,
-        message: error?.message,
-        stack: error?.stack,
-        code: error?.code,
-        details: error?.details,
-        fullError: JSON.stringify(error, Object.getOwnPropertyNames(error))
+        name: errorObj.name,
+        message: errorObj.message,
+        stack: errorObj.stack,
+        code: errorObj.code,
+        details: errorObj.details,
+        fullError: JSON.stringify(errorObj, Object.getOwnPropertyNames(errorObj))
       });
       
       res.status(500).json({ 
         error: 'Failed to create book',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        details: errorObj.message || 'Unknown error',
         ...(process.env.NODE_ENV === 'development' && {
-          stack: error?.stack,
-          code: error?.code,
-          name: error?.name
+          stack: errorObj.stack,
+          code: errorObj.code,
+          name: errorObj.name
         })
       });
     }

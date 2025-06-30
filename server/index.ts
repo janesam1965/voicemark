@@ -94,13 +94,16 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Serve the app on the specified port or default to 5001 to avoid common port conflicts
+  // Serve the app on the specified port or default to 5002 to avoid common port conflicts
   // Use 127.0.0.1 instead of localhost to force IPv4
-  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5001;
-  const host = '127.0.0.1';
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5002;
+  // Listen on all network interfaces to allow connections from emulator
+  const host = '0.0.0.0';
   
   server.listen(port, host, () => {
     log(`Server is running on http://${host}:${port}`);
+    log(`Access the server from your computer at http://localhost:${port}`);
+    log(`Access from Android emulator at http://10.0.2.2:${port}`);
     log(`NODE_ENV: ${process.env.NODE_ENV}`);
   }).on('error', (error: NodeJS.ErrnoException) => {
     if (error.code === 'EADDRINUSE') {

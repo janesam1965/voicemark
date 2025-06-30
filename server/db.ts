@@ -38,14 +38,39 @@ const sslConfig = {
   }
 };
 
-// Configure SSL options with the provided certificate
-const sslOptions = {
-  rejectUnauthorized: true,
-  ca: readFileSync(path.join(process.cwd(), 'prod-ca-2021.crt')).toString()
-};
+// Configure SSL options based on environment
+let sslOptions;
+
+// For development: Use a more robust SSL configuration
+if (process.env.NODE_ENV === 'production') {
+  // In production, we should use proper SSL verification
+  try {
+    const certPath = path.join(process.cwd(), 'prod-ca-2021.crt');
+    if (fs.existsSync(certPath)) {
+      sslOptions = {
+        rejectUnauthorized: true,
+        ca: readFileSync(certPath).toString()
+      };
+      console.log(`Production mode: Using SSL certificate from ${certPath}`);
+    } else {
+      throw new Error('SSL certificate not found');
+    }
+  } catch (error) {
+    console.error('Error configuring SSL for production:', error);
+    process.exit(1);
+  }
+} else {
+  // In development, disable SSL verification completely
+  console.log('Development mode: SSL verification disabled');
+  // Completely disable SSL for development
+  sslOptions = false;
+  console.log('SSL completely disabled for development');
+}
 
 export const pool = new Pool({ 
   connectionString: databaseUrl,
   ssl: sslOptions
 });
+
+console.log('Attempting to connect to database with URL:', databaseUrl.replace(/:[^:@]*@/, ':****@'));
 export const db = drizzle({ client: pool, schema });
