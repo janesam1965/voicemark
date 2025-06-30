@@ -33,6 +33,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Serve uploaded audio files
   app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
+  // Health check endpoint
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
   // Books routes
   app.get('/api/books', async (req, res) => {
     try {

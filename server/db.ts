@@ -1,12 +1,10 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from "@shared/schema";
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as fs from 'fs';
 import { fileURLToPath } from 'url';
-import { readFileSync } from 'fs';
 
 // Get the current file's directory name in ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -21,56 +19,32 @@ dotenv.config({ path: envLocalPath }) || dotenv.config({ path: envPath });
 // Log environment variables for debugging
 console.log('Database configuration loaded from:', fs.existsSync(envLocalPath) ? '.env.local' : '.env');
 
-neonConfig.webSocketConstructor = ws;
-
+// Get database URL from environment variables
 const databaseUrl = process.env.DATABASE_URL || 'postgresql://postgres:0811bCm2408!@db.pmtnpataxlbfkokqkxhi.supabase.co:5432/postgres';
 
 if (!databaseUrl) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+  throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");
 }
 
-// For development: Add SSL configuration to bypass certificate verification
-const sslConfig = {
-  ssl: {
-    rejectUnauthorized: false // Only for development!
-  }
-};
+// Configure SSL options for Supabase
+const sslConfig = process.env.NODE_ENV === 'production' 
+  ? { rejectUnauthorized: true } 
+  : { rejectUnauthorized: false }; // Allow self-signed certs in development
 
-// Configure SSL options based on environment
-let sslOptions;
-
-// For development: Use a more robust SSL configuration
-if (process.env.NODE_ENV === 'production') {
-  // In production, we should use proper SSL verification
-  try {
-    const certPath = path.join(process.cwd(), 'prod-ca-2021.crt');
-    if (fs.existsSync(certPath)) {
-      sslOptions = {
-        rejectUnauthorized: true,
-        ca: readFileSync(certPath).toString()
-      };
-      console.log(`Production mode: Using SSL certificate from ${certPath}`);
-    } else {
-      throw new Error('SSL certificate not found');
-    }
-  } catch (error) {
-    console.error('Error configuring SSL for production:', error);
-    process.exit(1);
-  }
-} else {
-  // In development, disable SSL verification completely
-  console.log('Development mode: SSL verification disabled');
-  // Completely disable SSL for development
-  sslOptions = false;
-  console.log('SSL completely disabled for development');
-}
-
-export const pool = new Pool({ 
-  connectionString: databaseUrl,
-  ssl: sslOptions
+// Create a PostgreSQL client
+const client = postgres(databaseUrl, { 
+  ssl: sslConfig,
+  // Add connection pooling configuration if needed
+  max: 10, // Maximum number of connections in the pool
+  idle_timeout: 20, // Max idle time in seconds
+  connect_timeout: 10, // Connection timeout in seconds
 });
 
-console.log('Attempting to connect to database with URL:', databaseUrl.replace(/:[^:@]*@/, ':****@'));
-export const db = drizzle({ client: pool, schema });
+// Log the database connection (with sensitive info redacted)
+console.log('Connecting to Supabase database:', 
+  databaseUrl.replace(/:[^:]*@/, ':***@').replace(/@[^/]*\//, '@***/'));
+
+// Create a Drizzle ORM instance
+export const db = drizzle(client, { schema });
+
+export { client as sql };

@@ -8,9 +8,9 @@ async function throwIfResNotOk(res: Response) {
 }
 
 // Base URL for API requests - points to our server
-// Use environment variable if set, otherwise default to localhost
-// For Android emulator, set VITE_API_BASE_URL=http://10.0.2.2:5001 in .env file
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5001';
+// Use environment variable if set, otherwise default to localhost:5002
+// For Android emulator, set VITE_API_BASE_URL=http://10.0.2.2:5002 in .env file
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5002';
 
 // Log the API base URL for debugging
 console.log('API Base URL:', API_BASE_URL);
