@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as fs from 'fs';
 import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
 
 // Get the current file's directory name in ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -30,5 +31,21 @@ if (!databaseUrl) {
   );
 }
 
-export const pool = new Pool({ connectionString: databaseUrl });
+// For development: Add SSL configuration to bypass certificate verification
+const sslConfig = {
+  ssl: {
+    rejectUnauthorized: false // Only for development!
+  }
+};
+
+// Configure SSL options with the provided certificate
+const sslOptions = {
+  rejectUnauthorized: true,
+  ca: readFileSync(path.join(process.cwd(), 'prod-ca-2021.crt')).toString()
+};
+
+export const pool = new Pool({ 
+  connectionString: databaseUrl,
+  ssl: sslOptions
+});
 export const db = drizzle({ client: pool, schema });

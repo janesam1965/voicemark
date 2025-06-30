@@ -68,6 +68,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log('Received book creation request with body:', JSON.stringify(req.body, null, 2));
       
+      // Log the raw request headers for debugging
+      console.log('Request headers:', JSON.stringify(req.headers, null, 2));
+      
       // Validate the request body against the schema
       const bookData = insertBookSchema.parse(req.body);
       console.log('Validated book data:', JSON.stringify(bookData, null, 2));
@@ -80,19 +83,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(book);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.error('Validation error creating book:', error.errors);
+        console.error('Validation error creating book:', JSON.stringify(error.errors, null, 2));
         return res.status(400).json({ 
           error: 'Invalid book data', 
           details: error.errors.map(e => ({
             path: e.path.join('.'),
-            message: e.message
+            message: e.message,
+            code: e.code,
+            received: e.received,
+            expected: e.expected
           })) 
         });
       }
-      console.error('Unexpected error creating book:', error);
+      
+      // Enhanced error logging
+      console.error('Unexpected error creating book:', {
+        name: error?.name,
+        message: error?.message,
+        stack: error?.stack,
+        code: error?.code,
+        details: error?.details,
+        fullError: JSON.stringify(error, Object.getOwnPropertyNames(error))
+      });
+      
       res.status(500).json({ 
         error: 'Failed to create book',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
+        ...(process.env.NODE_ENV === 'development' && {
+          stack: error?.stack,
+          code: error?.code,
+          name: error?.name
+        })
       });
     }
   });

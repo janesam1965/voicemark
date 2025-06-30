@@ -7,6 +7,9 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+// Base URL for API requests - points to our server
+const API_BASE_URL = 'http://127.0.0.1:5001';
+
 export async function apiRequest(
   method: string,
   url: string,
@@ -15,15 +18,25 @@ export async function apiRequest(
   // Handle FormData (for file uploads) differently than JSON
   const isFormData = data instanceof FormData;
   
-  const res = await fetch(url, {
-    method,
-    headers: !isFormData && data ? { "Content-Type": "application/json" } : {},
-    body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
-    credentials: "include",
-  });
+  // Prepend base URL if the URL is not absolute
+  const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+  
+  console.log(`Making ${method} request to:`, fullUrl);
+  
+  try {
+    const res = await fetch(fullUrl, {
+      method,
+      headers: !isFormData && data ? { "Content-Type": "application/json" } : {},
+      body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
+      credentials: "include",
+    });
 
-  await throwIfResNotOk(res);
-  return res;
+    await throwIfResNotOk(res);
+    return res;
+  } catch (error) {
+    console.error('API request failed:', error);
+    throw error;
+  }
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
