@@ -47,14 +47,21 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // Books
   async createBook(bookData: InsertBook): Promise<Book> {
-    const [book] = await db
-      .insert(books)
-      .values({
-        ...bookData,
-        updatedAt: new Date(),
-      })
-      .returning();
-    return book;
+    try {
+      console.log('Creating book with data:', JSON.stringify(bookData, null, 2));
+      const [book] = await db
+        .insert(books)
+        .values({
+          ...bookData,
+          updatedAt: new Date(),
+        })
+        .returning();
+      console.log('Successfully created book:', JSON.stringify(book, null, 2));
+      return book;
+    } catch (error) {
+      console.error('Error in createBook:', error);
+      throw error; // Re-throw to be handled by the route handler
+    }
   }
 
   async getBook(id: number): Promise<Book | undefined> {

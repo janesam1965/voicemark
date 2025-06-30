@@ -66,15 +66,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/books', async (req, res) => {
     try {
+      console.log('Received book creation request with body:', JSON.stringify(req.body, null, 2));
+      
+      // Validate the request body against the schema
       const bookData = insertBookSchema.parse(req.body);
+      console.log('Validated book data:', JSON.stringify(bookData, null, 2));
+      
+      // Create the book in the database
       const book = await storage.createBook(bookData);
+      console.log('Book created successfully, sending response');
+      
+      // Return the created book
       res.status(201).json(book);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: 'Invalid book data', details: error.errors });
+        console.error('Validation error creating book:', error.errors);
+        return res.status(400).json({ 
+          error: 'Invalid book data', 
+          details: error.errors.map(e => ({
+            path: e.path.join('.'),
+            message: e.message
+          })) 
+        });
       }
-      console.error('Error creating book:', error);
-      res.status(500).json({ error: 'Failed to create book' });
+      console.error('Unexpected error creating book:', error);
+      res.status(500).json({ 
+        error: 'Failed to create book',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 

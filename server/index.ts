@@ -1,6 +1,26 @@
-import * as dotenv from "dotenv";
-dotenv.config();
+// Load environment variables first
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
 
+// Get the current file's directory name in ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables from the .env file in the project root
+const envPath = path.resolve(process.cwd(), '../../.env');
+console.log('Loading .env from:', envPath);
+
+dotenv.config({ path: envPath });
+
+// Log environment variables for debugging (don't log sensitive data in production)
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('DATABASE_URL:', process.env.DATABASE_URL ? '***REDACTED***' : 'NOT FOUND');
+
+if (!process.env.DATABASE_URL) {
+  console.error('ERROR: DATABASE_URL is not set in the environment variables');
+  process.exit(1);
+}
 
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
@@ -62,15 +82,22 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+  // Serve the app on the specified port or default to 5001 to avoid common port conflicts
+  // Use 127.0.0.1 instead of localhost to force IPv4
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5001;
+  const host = '127.0.0.1';
+  
+  server.listen(port, host, () => {
+    log(`Server is running on http://${host}:${port}`);
+    log(`NODE_ENV: ${process.env.NODE_ENV}`);
+  }).on('error', (error: NodeJS.ErrnoException) => {
+    if (error.code === 'EADDRINUSE') {
+      log(`Error: Port ${port} is already in use. Please choose another port.`);
+    } else if (error.code === 'EACCES') {
+      log(`Error: Permission denied. Try using a port number higher than 1024.`);
+    } else {
+      log(`Server error: ${error.message}`);
+    }
+    process.exit(1);
   });
 })();
